@@ -10,13 +10,12 @@ Lab dùng lại code của case study **quản lý thư viện** mà nhóm trìn
 java -version
 ```
 
-1. Trên GitHub, bấm **Use this template → Create a new repository** để tạo repo của riêng bạn. Đặt repo ở chế độ **Public** để nhóm chấm được.
-2. Clone repo vừa tạo về máy:
+1. Clone repo về máy:
    ```bash
-   git clone https://github.com/<tai-khoan-cua-ban>/<ten-repo>.git
-   cd <ten-repo>
+   git clone https://github.com/tzin1401/seminar-lab-nhom09.git
+   cd seminar-lab-nhom09
    ```
-3. Chạy thử:
+2. Chạy thử:
    ```bash
    ./mvnw clean verify
    ```
@@ -92,18 +91,20 @@ Mở `target/pit-reports/index.html` → `LoanService.java`. Dòng nào **đỏ*
 
 ## Nộp bài
 
-1. Điền file `REPORT.md` (đã có sẵn khung trong repo), rồi **đổi tên file thành `<MSSV>.md`**, ví dụ `23120001.md`:
-   ```bash
-   git mv REPORT.md <MSSV>.md
-   ```
-   Trên Windows, lệnh này dùng giống hệt. Cũng có thể đổi tên trong VS Code (chuột phải vào file → Rename).
-2. Commit và push lên repo của bạn:
-   ```bash
-   git add -A
-   git commit -m "Hoàn thành lab"
-   git push
-   ```
-3. Mở tab **Actions** trên GitHub, kiểm tra lần chạy mới nhất có dấu ✅.
-4. Nộp link repo qua form của nhóm.
+Chỉ nộp **file báo cáo**, không cần push code hay nộp link repo.
 
-**Chấm điểm (10đ):** Bài 1 được 3đ, 2a được 3đ, 2b (tìm và sửa được lỗi) được 3đ, CI xanh được 1đ.
+**Quy tắc đặt tên:** `StudentID_ExerciseID.zip`, trong đó `ExerciseID` là **`UnitTesting`**. Ví dụ MSSV `23120001` thì nộp file `23120001_UnitTesting.zip`.
+
+1. Điền đầy đủ file `REPORT.md`. Ở phần 2b, **dán luôn đoạn test và dòng code bạn đã sửa**, vì nhóm chỉ chấm qua báo cáo.
+2. Đổi tên `REPORT.md` thành `<MSSV>_UnitTesting.md`, ví dụ `23120001_UnitTesting.md`. Có thể đổi tên trong VS Code: chuột phải vào file → Rename.
+3. Nén file đó thành `<MSSV>_UnitTesting.zip`:
+   ```bash
+   # macOS / Linux
+   zip 23120001_UnitTesting.zip 23120001_UnitTesting.md
+   # Windows (PowerShell)
+   Compress-Archive 23120001_UnitTesting.md 23120001_UnitTesting.zip
+   ```
+   Hoặc chuột phải vào file → Compress (macOS) / Send to → Compressed (zipped) folder (Windows), rồi đổi tên file zip cho đúng quy tắc.
+4. Nộp file `<MSSV>_UnitTesting.zip`.
+
+**Chấm điểm (10đ):** Bài 1 được 3đ, 2a được 3đ, 2b (tìm và sửa được lỗi) được 3đ, câu hỏi tổng kết được 1đ.
