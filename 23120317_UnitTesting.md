@@ -58,8 +58,46 @@ Cách phát hiện: mutant sống sót ở dòng 28 cho thấy biên `3` chưa �
 
 **Bạn đã sửa test và code như thế nào?**
 
-- **Test** (`LoanServiceTest.daDatHanMuc`): `when(loans.countActiveByMemberId(1)).thenReturn(3L)`, kiểm tra mã `LIMIT_REACHED`, và kiểm tra `loans.save` cùng `books.save` không được gọi. Test `conPhiChuaTra` dùng thành viên nợ `BigDecimal.ONE` (giá trị dương nhỏ nhất, sát biên `> 0`), đang mượn 0 cuốn, mong đợi `UNPAID_FINE` và không lưu gì.
-- **Code** (`LoanService.java` dòng 28): `> 3` sửa thành `>= 3`.
+**Test** (`src/test/java/vn/edu/seminar/loan/LoanServiceTest.java`): ban đầu `daDatHanMuc` dùng `thenReturn(4L)`, sau khi đọc mutant sống sót thì sửa thành `thenReturn(3L)`, đúng giá trị biên trong đặc tả. Test `conPhiChuaTra` dùng thành viên nợ `BigDecimal.ONE` (giá trị dương nhỏ nhất, sát biên `> 0`), đang mượn 0 cuốn, mong đợi `UNPAID_FINE`. Cả hai test đều kiểm tra thêm là không có phiếu mượn nào được lưu và sách không bị đánh dấu là đã mượn.
+
+```java
+// BÀI 2a: thành viên đang mượn đủ số cuốn tối đa thì bị từ chối với mã LIMIT_REACHED.
+@Test void daDatHanMuc() {
+    availableBook(); member(BigDecimal.ZERO);
+    when(loans.countActiveByMemberId(1)).thenReturn(3L);   // bản đầu dùng 4L -> mutant ở dòng 28 sống sót
+    assertCode(LIMIT_REACHED);
+    verify(loans, never()).save(any());
+    verify(books, never()).save(any());
+}
+
+// BÀI 2b: thành viên còn nợ phí thì bị từ chối với mã UNPAID_FINE.
+@Test void conPhiChuaTra() {
+    availableBook(); member(BigDecimal.ONE);
+    when(loans.countActiveByMemberId(1)).thenReturn(0L);
+    assertCode(UNPAID_FINE);
+    verify(loans, never()).save(any());
+    verify(books, never()).save(any());
+}
+```
+
+Khi test dùng `3L`, chạy trên code gốc ra kết quả đỏ:
+
+```
+[ERROR] vn.edu.seminar.loan.LoanServiceTest.daDatHanMuc -- <<< FAILURE!
+[ERROR]   LoanServiceTest.daDatHanMuc:55->assertCode:87
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0
+```
+
+**Code** (`src/main/java/vn/edu/seminar/loan/LoanService.java`, dòng 28):
+
+```diff
+-        if (loans.countActiveByMemberId(memberId) > 3) {
++        if (loans.countActiveByMemberId(memberId) >= 3) {
+             throw new LoanException(LIMIT_REACHED);
+         }
+```
+
+Ngoài ra, ở Bài 1 tôi chỉ điền số vào `src/test/resources/fine-cases.csv`, không sửa code `FineCalculator`.
 
 **Kết quả PIT sau khi sửa** (Killed bao nhiêu / tổng bao nhiêu):
 
